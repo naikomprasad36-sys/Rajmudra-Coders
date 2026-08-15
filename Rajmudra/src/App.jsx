@@ -124,14 +124,15 @@ export default function App() {
             <CreateEventPage onAddEvent={handleAddEvent} />
           )}
 
-        {activeTab === 'dashboard' && (
-          <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
-        )}
+          {activeTab === 'dashboard' && (
+            <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
+          )}
 
-        {activeTab === 'admin' && (
-          <AdminEventsPanel events={events} setEvents={setEvents} attendees={attendees} />
-        )}
-      </main>
+          {activeTab === 'admin' && (
+            <AdminEventsPanel events={events} setEvents={setEvents} attendees={attendees} />
+          )}
+        </main>
+      )}
     </div>
   );
 }
