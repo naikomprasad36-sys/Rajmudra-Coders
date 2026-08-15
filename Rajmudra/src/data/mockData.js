@@ -37,9 +37,9 @@ export const initialMyTickets = [
 ];
 
 export const initialAttendees = [
-  { id: 'TKT-9821', name: 'Rahul Patil', email: 'rahul@example.com', checkedIn: true, time: '09:45 AM' },
-  { id: 'TKT-1044', name: 'Sneha Deshmukh', email: 'sneha@example.com', checkedIn: false, time: '-' },
-  { id: 'TKT-3091', name: 'Amit Shinde', email: 'amit@example.com', checkedIn: false, time: '-' },
+  { id: 'TKT-9821', name: 'Rahul Patil', email: 'rahul@example.com', checkedIn: true, time: '09:45 AM', eventId: 1, eventTitle: 'AI & Web3 National Hackathon 2026' },
+  { id: 'TKT-1044', name: 'Sneha Deshmukh', email: 'sneha@example.com', checkedIn: false, time: '-', eventId: 2, eventTitle: 'Full Stack React Masterclass' },
+  { id: 'TKT-3091', name: 'Amit Shinde', email: 'amit@example.com', checkedIn: false, time: '-', eventId: 1, eventTitle: 'AI & Web3 National Hackathon 2026' },
 ];
 
 export const initialBookedPasses = [

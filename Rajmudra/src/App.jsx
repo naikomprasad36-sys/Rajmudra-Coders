@@ -42,10 +42,17 @@ export default function App() {
   // Action 1: Book a ticket / Pass
   const handleBookTicket = (ticketOrEvent) => {
     if (ticketOrEvent && ticketOrEvent.id && String(ticketOrEvent.id).startsWith('TKT-')) {
-      setMyTickets((prev) => [ticketOrEvent, ...prev]);
       setAttendees((prev) => [
         ...prev,
-        { id: ticketOrEvent.id, name: ticketOrEvent.name || 'User (You)', email: 'user@rajmudra.com', checkedIn: false, time: '-' }
+        { 
+          id: ticketOrEvent.id, 
+          name: ticketOrEvent.name || 'User (You)', 
+          email: 'user@rajmudra.com', 
+          checkedIn: false, 
+          time: '-',
+          eventId: ticketOrEvent.eventId || 1,
+          eventTitle: ticketOrEvent.eventTitle || 'Campus Event Pass'
+        }
       ]);
       return;
     }
@@ -65,7 +72,15 @@ export default function App() {
     setMyTickets((prev) => [ticketData, ...prev]);
     setAttendees((prev) => [
       ...prev,
-      { id: newTicketId, name: 'User (You)', email: 'user@campus.edu', checkedIn: false, time: '-' }
+      { 
+        id: newTicketId, 
+        name: 'User (You)', 
+        email: 'user@campus.edu', 
+        checkedIn: false, 
+        time: '-',
+        eventId: ticketOrEvent?.id || 1,
+        eventTitle: ticketOrEvent?.title || 'Campus Event Pass'
+      }
     ]);
 
     if (ticketOrEvent && ticketOrEvent.id) {

@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Hide scrollbars globally */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 @keyframes shineMove {
   0% {
     transform: translateX(-120%) skewX(-25deg);
