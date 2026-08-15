@@ -5,7 +5,7 @@ import FoodBookingPage from '../pages/FoodBookingPage';
 import MyTicketsPage from '../pages/MyTicketsPage';
 import CreateEventPage from '../pages/CreateEventPage';
 import DashboardPage from '../pages/DashboardPage';
-import AdminEventsPanel from '../pages/adminpanel';
+import AdminEventsPanel from '../pages/AdminEventsPanel';
 import AboutPage from '../pages/AboutPage';
 
 export default function AppRoutes({
