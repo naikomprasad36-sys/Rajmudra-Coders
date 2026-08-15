@@ -64,11 +64,10 @@ export default function DashboardPage({ attendees, onToggleCheckIn }) {
                   <td className="px-6 py-3 text-right">
                     <button
                       onClick={() => onToggleCheckIn(a.id)}
-                      className={`px-3 py-1 rounded-full font-bold transition ${
-                        a.checkedIn
+                      className={`px-3 py-1 rounded-full font-bold transition ${a.checkedIn
                           ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
                           : 'bg-slate-100 text-slate-700 hover:bg-indigo-600 hover:text-white'
-                      }`}
+                        }`}
                     >
                       {a.checkedIn ? '✓ Scanned / Present' : 'Mark Present'}
                     </button>

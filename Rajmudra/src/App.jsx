@@ -357,6 +357,16 @@ function CreateEventPage({ onAddEvent }) {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('tickets');
+import Navbar from './components/Navbar';
+import EventsPage from './pages/EventsPage';
+import MyTicketsPage from './pages/MyTicketsPage';
+import CreateEventPage from './pages/CreateEventPage';
+import DashboardPage from './pages/DashboardPage';
+import AdminEventsPanel from './pages/adminpanel.jsx';
+
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('admin');
 
   const [bookedPasses, setBookedPasses] = useState([
     {
@@ -396,6 +406,15 @@ export default function App() {
     };
 
     setBookedPasses([passFormat, ...bookedPasses]);
+    setMyTickets([ticketData, ...myTickets]);
+    setAttendees([
+      ...attendees,
+      { id: newTicketId, name: 'User (You)', email: 'user@campus.edu', checkedIn: false, time: '-' }
+    ]);
+
+    // Decrement available seats
+    setEvents(events.map((ev) => ev.id === event.id ? { ...ev, availableSeats: ev.availableSeats - 1 } : ev));
+
     setActiveTab('tickets');
   };
 
@@ -453,6 +472,34 @@ export default function App() {
           />
         )}
       </main>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        ticketCount={myTickets.length}
+      />
+
+      {activeTab === 'events' ? (
+        <EventsPage events={events} onBookTicket={handleBookTicket} />
+      ) : (
+        <main className="max-w-6xl mx-auto p-6">
+          {activeTab === 'tickets' && (
+            <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
+          )}
+
+          {activeTab === 'create' && (
+            <CreateEventPage onAddEvent={handleAddEvent} />
+          )}
+
+          {activeTab === 'dashboard' && (
+            <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
+          )}
+
+          {activeTab === 'admin' && (
+            <AdminEventsPanel events={events} setEvents={setEvents} attendees={attendees} />
+          )}
+        </main>
+      )}
     </div>
   );
 }
