@@ -14,11 +14,17 @@ import {
   Lock,
   Mail,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  Armchair,
+  UtensilsCrossed,
+  Menu,
+  SlidersHorizontal,
+  ChevronRight
 } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
   const [hoveredTab, setHoveredTab] = useState(null);
+  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   
   // Auth Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -34,13 +40,37 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
   const [user, setUser] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  const navItems = [
+  // 1. Primary Public Navigation Tabs (Shown in main navbar)
+  const primaryNavItems = [
     { id: 'events', label: 'Events', icon: Calendar },
+    { id: 'seats', label: 'Seat Selection', icon: Armchair },
+    { id: 'food', label: 'Food Booking', icon: UtensilsCrossed },
     { id: 'tickets', label: 'My Tickets', icon: Ticket, badge: ticketCount },
-    { id: 'create', label: 'Create Event', icon: PlusCircle },
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'admin', label: 'Admin Panel', icon: ShieldCheck },
   ];
+
+  // 2. Admin & Management Tools (Exclusively inside the Hamburger Menu)
+  const hamburgerItems = [
+    { 
+      id: 'create', 
+      label: 'Create Event', 
+      icon: PlusCircle, 
+      desc: 'Publish and launch a new luxury event' 
+    },
+    { 
+      id: 'dashboard', 
+      label: 'Dashboard', 
+      icon: LayoutDashboard, 
+      desc: 'Live attendance scan & check-in monitor' 
+    },
+    { 
+      id: 'admin', 
+      label: 'Admin Panel', 
+      icon: ShieldCheck, 
+      desc: 'Seat capacity, pricing & revenue control' 
+    },
+  ];
+
+  const isManagementActive = hamburgerItems.some((item) => item.id === activeTab);
 
   const handleOpenAuth = (mode = 'login') => {
     setAuthMode(mode);
@@ -66,10 +96,15 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
     setIsUserMenuOpen(false);
   };
 
+  const handleHamburgerSelect = (id) => {
+    setActiveTab(id);
+    setIsHamburgerOpen(false);
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 bg-[#FAF7F2]/90 backdrop-blur-xl border-b border-[#E5B84B]/20 transition-all duration-300 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-3">
           
           {/* Brand Logo - Rajmudra Events / Golden Aura */}
           <div 
@@ -92,9 +127,9 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
             </div>
           </div>
 
-          {/* Floating Pill Capsule Navigation Tabs */}
+          {/* Center: Primary Public Navigation Pills */}
           <nav className="hidden md:flex relative bg-white/85 backdrop-blur-2xl border border-[#E5B84B]/30 shadow-lg shadow-[#E5B84B]/10 rounded-full p-1.5 items-center gap-1 sm:gap-1.5 overflow-x-auto">
-            {navItems.map((item) => {
+            {primaryNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               const isHovered = hoveredTab === item.id;
@@ -149,10 +184,99 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
             })}
           </nav>
 
-          {/* Right Action Area: Login / Sign In / User Profile */}
+          {/* Right Section: Hamburger Menu + Auth Buttons */}
           <div className="flex items-center gap-2.5">
+            
+            {/* Hamburger Button for Admin, Dashboard & Create Event */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}
+                title="Organizer & Admin Tools"
+                className={`relative px-3.5 py-2.5 rounded-full border text-xs font-black flex items-center gap-2 transition-all duration-300 shadow-sm ${
+                  isHamburgerOpen || isManagementActive
+                    ? 'bg-gradient-to-r from-[#D4A337] via-[#E5B84B] to-[#D4A337] text-[#1A1614] border-[#F3E5AB] shadow-md shadow-[#E5B84B]/30 scale-105'
+                    : 'bg-white/90 text-[#5C4E46] border-[#E5B84B]/40 hover:bg-[#E5B84B]/15 hover:text-[#96660F] hover:border-[#E5B84B]'
+                }`}
+              >
+                {/* Pulsing indicator if currently in management tab */}
+                {isManagementActive && !isHamburgerOpen && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white animate-pulse" />
+                )}
+
+                {isHamburgerOpen ? (
+                  <X className="w-4 h-4 text-[#1A1614] stroke-[2.5]" />
+                ) : (
+                  <Menu className={`w-4 h-4 transition-transform duration-300 ${isManagementActive ? 'text-[#1A1614]' : 'text-[#B8860B]'}`} />
+                )}
+
+                <span className="hidden sm:inline font-black tracking-wide">
+                  {isManagementActive ? 'Admin Tools' : 'Menu'}
+                </span>
+              </button>
+
+              {/* Hamburger Dropdown Drawer (Create Event, Dashboard, Admin Panel) */}
+              {isHamburgerOpen && (
+                <div className="absolute right-0 mt-3 w-72 sm:w-80 bg-[#241D1A] rounded-3xl shadow-2xl border border-[#E5B84B]/40 p-3.5 space-y-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-3.5 py-2.5 border-b border-[#E5B84B]/20 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#D1C7BD] block">Management Suite</span>
+                      <h4 className="text-sm font-extrabold text-[#F3E5AB]">Admin & Host Controls</h4>
+                    </div>
+                    <SlidersHorizontal className="w-4 h-4 text-[#E5B84B]" />
+                  </div>
+
+                  <div className="space-y-1.5 pt-1">
+                    {hamburgerItems.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeTab === item.id;
+
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleHamburgerSelect(item.id)}
+                          className={`w-full p-3 rounded-2xl text-left transition-all duration-200 flex items-center justify-between group border ${
+                            isActive
+                              ? 'bg-[#E5B84B]/20 border-[#E5B84B]/60 text-white shadow-md'
+                              : 'bg-[#1A1614] border-[#E5B84B]/15 hover:border-[#E5B84B]/40 hover:bg-[#2C221E] text-[#D1C7BD]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${
+                              isActive
+                                ? 'bg-gradient-to-tr from-[#D4A337] to-[#E5B84B] text-[#1A1614]'
+                                : 'bg-[#2C221E] text-[#E5B84B] border border-[#E5B84B]/30'
+                            }`}>
+                              <Icon className="w-4 h-4 stroke-[2.5]" />
+                            </div>
+                            <div>
+                              <p className={`font-extrabold text-xs sm:text-sm leading-tight ${isActive ? 'text-[#F3E5AB]' : 'text-white group-hover:text-[#F3E5AB]'}`}>
+                                {item.label}
+                              </p>
+                              <p className="text-[10px] text-[#A39485] line-clamp-1 mt-0.5">
+                                {item.desc}
+                              </p>
+                            </div>
+                          </div>
+
+                          <ChevronRight className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${isActive ? 'text-[#E5B84B]' : 'text-[#6B5B52]'}`} />
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="p-2.5 bg-[#1A1614] rounded-2xl border border-[#E5B84B]/15 text-center">
+                    <p className="text-[10px] text-[#A39485]">
+                      🔒 Secure role-based management panel
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Auth Buttons / User Profile */}
             {user ? (
-              /* User Profile Menu */
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -161,7 +285,7 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                   <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#D4A337] to-[#F3E5AB] flex items-center justify-center text-[#1A1614] font-black text-xs shadow-xs">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-xs font-bold text-[#2C221E] max-w-[90px] truncate">
+                  <span className="text-xs font-bold text-[#2C221E] max-w-[90px] truncate hidden sm:inline">
                     {user.name}
                   </span>
                   <ChevronDown className={`w-3.5 h-3.5 text-[#8C7A6B] transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
@@ -198,34 +322,32 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                 )}
               </div>
             ) : (
-              /* Auth Buttons: Log In & Sign In */
-              <div className="flex items-center gap-2">
-                {/* Log In Button (Sleek Outline) */}
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={() => handleOpenAuth('login')}
-                  className="px-4 py-2 rounded-full text-xs font-bold text-[#5C4E46] hover:text-[#96660F] hover:bg-[#E5B84B]/15 border border-transparent hover:border-[#E5B84B]/40 transition-all duration-300 flex items-center gap-1.5"
+                  className="px-3 sm:px-4 py-2 rounded-full text-xs font-bold text-[#5C4E46] hover:text-[#96660F] hover:bg-[#E5B84B]/15 border border-transparent hover:border-[#E5B84B]/40 transition-all duration-300 flex items-center gap-1.5"
                 >
                   <LogIn className="w-3.5 h-3.5 text-[#B8860B]" />
-                  <span>Log In</span>
+                  <span className="hidden sm:inline">Log In</span>
                 </button>
 
-                {/* Sign In / Sign Up Button (Golden Luxury Pill) */}
                 <button
                   onClick={() => handleOpenAuth('signup')}
-                  className="relative group overflow-hidden px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-[#D4A337] via-[#C59325] to-[#B8860B] hover:from-[#E5B84B] hover:to-[#D4A337] text-[#1A1614] font-black text-xs shadow-md shadow-[#D4A337]/30 hover:shadow-xl hover:shadow-[#D4A337]/40 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-1.5 border border-[#F3E5AB]/40"
+                  className="relative group overflow-hidden px-3.5 sm:px-5 py-2 rounded-full bg-gradient-to-r from-[#D4A337] via-[#C59325] to-[#B8860B] hover:from-[#E5B84B] hover:to-[#D4A337] text-[#1A1614] font-black text-xs shadow-md shadow-[#D4A337]/30 hover:shadow-xl hover:shadow-[#D4A337]/40 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-1.5 border border-[#F3E5AB]/40"
                 >
                   <UserPlus className="w-3.5 h-3.5 text-[#1A1614]" />
                   <span>Sign In</span>
                 </button>
               </div>
             )}
+
           </div>
 
         </div>
 
-        {/* Mobile Navigation bar */}
+        {/* Mobile View Tab Bar for Primary Tabs */}
         <div className="md:hidden border-t border-[#E5B84B]/20 px-4 py-2 bg-white/60 overflow-x-auto flex items-center gap-1.5">
-          {navItems.map((item) => {
+          {primaryNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
@@ -250,7 +372,6 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-200">
           <div className="bg-[#FAF7F2] rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-[#E5B84B]/40 relative">
-            {/* Close Button */}
             <button
               onClick={() => setIsAuthModalOpen(false)}
               className="absolute top-5 right-5 p-2 rounded-xl bg-white/80 hover:bg-[#E5B84B]/20 text-[#5C4E46] hover:text-[#1A1614] transition border border-[#E5B84B]/20"
@@ -258,7 +379,6 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
               <X className="w-4 h-4" />
             </button>
 
-            {/* Header / Tabs */}
             <div className="space-y-3">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E5B84B]/20 border border-[#E5B84B]/40 text-[#96660F] text-xs font-bold">
                 <Sparkles className="w-3.5 h-3.5 text-[#B8860B]" />
@@ -273,7 +393,6 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                   : 'Create an account to discover and book luxury events instantly.'}
               </p>
 
-              {/* Mode Toggle Tabs */}
               <div className="flex bg-white/80 p-1 rounded-2xl border border-[#E5B84B]/30">
                 <button
                   type="button"
@@ -300,7 +419,6 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
               </div>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleAuthSubmit} className="space-y-3.5 text-xs sm:text-sm">
               {authMode === 'signup' && (
                 <div className="space-y-1">
@@ -346,7 +464,6 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                 />
               </div>
 
-              {/* Quick Demo Fill Buttons */}
               <div className="pt-1 flex items-center gap-2">
                 <span className="text-[10px] font-bold text-[#8C7A6B]">Quick Demo:</span>
                 <button
@@ -365,7 +482,6 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                 </button>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#D4A337] via-[#C59325] to-[#B8860B] hover:from-[#E5B84B] hover:to-[#D4A337] text-[#1A1614] font-black text-sm shadow-lg shadow-[#D4A337]/30 transition transform hover:-translate-y-0.5 active:scale-95 mt-2"
