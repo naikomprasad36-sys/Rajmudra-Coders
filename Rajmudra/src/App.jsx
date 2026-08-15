@@ -1,82 +1,131 @@
-import React, { useState } from "react";
-import MyTicketsPage from "./MyTicketsPage";
-import CreateEventPage from "./CreateEventPage";
+import React, { useState } from 'react';
+import Navbar from './components/Navbar';
+import EventsPage from './pages/EventsPage';
+import MyTicketsPage from './pages/MyTicketsPage';
+import CreateEventPage from './pages/CreateEventPage';
+import DashboardPage from './pages/DashboardPage';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState("tickets");
+  const [activeTab, setActiveTab] = useState('events');
 
-  // Demo Ticket Data
-  const [tickets] = useState([
+  // Initial Events Data
+  const [events, setEvents] = useState([
     {
-      id: "RM-2026-001",
-      name: "Vedika Mokase",
-      eventTitle: "Rajmudra Hackathon 2026",
-      venue: "Pune Engineering College",
-      date: "15 Aug 2026",
-      time: "10:00 AM",
+      id: 1,
+      title: 'AI & Web3 National Hackathon 2026',
+      category: 'Hackathon',
+      date: '20 Aug 2026',
+      time: '10:00 AM',
+      venue: 'Main Auditorium, Campus',
+      totalSeats: 100,
+      availableSeats: 42,
+      price: 0,
+      banner: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=60'
     },
     {
-      id: "RM-2026-002",
-      name: "Vedika Mokase",
-      eventTitle: "AI & Innovation Summit",
-      venue: "Mumbai Convention Hall",
-      date: "22 Aug 2026",
-      time: "2:30 PM",
-    },
+      id: 2,
+      title: 'Full Stack React Masterclass',
+      category: 'Workshop',
+      date: '25 Aug 2026',
+      time: '02:00 PM',
+      venue: 'Lab 304, CS Department',
+      totalSeats: 50,
+      availableSeats: 12,
+      price: 199,
+      banner: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=60'
+    }
   ]);
 
+  // User Tickets Data
+  const [myTickets, setMyTickets] = useState([
+    {
+      id: 'TKT-9821',
+      eventTitle: 'AI & Web3 National Hackathon 2026',
+      name: 'Rahul Patil',
+      date: '20 Aug 2026',
+      time: '10:00 AM',
+      venue: 'Main Auditorium'
+    }
+  ]);
+
+  // Attendance Data
+  const [attendees, setAttendees] = useState([
+    { id: 'TKT-9821', name: 'Rahul Patil', email: 'rahul@example.com', checkedIn: true, time: '09:45 AM' },
+    { id: 'TKT-1044', name: 'Sneha Deshmukh', email: 'sneha@example.com', checkedIn: false, time: '-' },
+    { id: 'TKT-3091', name: 'Amit Shinde', email: 'amit@example.com', checkedIn: false, time: '-' },
+  ]);
+
+  // Action 1: Book a ticket
+  const handleBookTicket = (event) => {
+    if (event.availableSeats <= 0) return;
+
+    const newTicketId = `TKT-${Math.floor(1000 + Math.random() * 9000)}`;
+    const ticketData = {
+      id: newTicketId,
+      eventTitle: event.title,
+      name: 'User (You)',
+      date: event.date,
+      time: event.time,
+      venue: event.venue
+    };
+
+    setMyTickets([ticketData, ...myTickets]);
+    setAttendees([
+      ...attendees,
+      { id: newTicketId, name: 'User (You)', email: 'user@campus.edu', checkedIn: false, time: '-' }
+    ]);
+    
+    // Decrement available seats
+    setEvents(events.map((ev) => ev.id === event.id ? { ...ev, availableSeats: ev.availableSeats - 1 } : ev));
+
+    setActiveTab('tickets');
+  };
+
+  // Action 2: Add newly created event
+  const handleAddEvent = (newEvent) => {
+    setEvents([newEvent, ...events]);
+    setActiveTab('events');
+  };
+
+  // Action 3: Toggle attendance in Dashboard
+  const handleToggleCheckIn = (id) => {
+    setAttendees(attendees.map((a) => {
+      if (a.id === id) {
+        const nextStatus = !a.checkedIn;
+        return {
+          ...a,
+          checkedIn: nextStatus,
+          time: nextStatus ? new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
+        };
+      }
+      return a;
+    }));
+  };
+
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+      <Navbar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        ticketCount={myTickets.length} 
+      />
 
-      {/* Navbar */}
-      <nav className="bg-indigo-700 text-white px-6 py-4 flex items-center justify-between shadow-lg">
-        <h1 className="text-2xl font-black">
-          Rajmudra Coders
-        </h1>
-
-        <div className="flex gap-3">
-
-          <button
-            onClick={() => setCurrentPage("tickets")}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
-              currentPage === "tickets"
-                ? "bg-white text-indigo-700"
-                : "bg-white/20 hover:bg-white/30"
-            }`}
-          >
-            My Tickets
-          </button>
-
-          <button
-            onClick={() => setCurrentPage("create")}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
-              currentPage === "create"
-                ? "bg-white text-indigo-700"
-                : "bg-white/20 hover:bg-white/30"
-            }`}
-          >
-            Create Event
-          </button>
-
-        </div>
-      </nav>
-
-      {/* Page */}
       <main className="max-w-6xl mx-auto p-6">
-
-        {currentPage === "tickets" && (
-          <MyTicketsPage
-            tickets={tickets}
-            onBrowseClick={() => setCurrentPage("create")}
-          />
+        {activeTab === 'events' && (
+          <EventsPage events={events} onBookTicket={handleBookTicket} />
         )}
 
-        {currentPage === "create" && (
-          <CreateEventPage
-            onBack={() => setCurrentPage("tickets")}
-          />
+        {activeTab === 'tickets' && (
+          <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
         )}
 
+        {activeTab === 'create' && (
+          <CreateEventPage onAddEvent={handleAddEvent} />
+        )}
+
+        {activeTab === 'dashboard' && (
+          <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
+        )}
       </main>
     </div>
   );
