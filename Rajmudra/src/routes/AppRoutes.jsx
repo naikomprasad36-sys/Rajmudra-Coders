@@ -1,13 +1,15 @@
 import React from 'react';
 import { ShieldAlert, KeyRound, Sparkles } from 'lucide-react';
-import EventsPage from '../pages/EventsPage';
-import SeatSelectionPage from '../pages/SeatSelectionPage';
-import FoodBookingPage from '../pages/FoodBookingPage';
-import MyTicketsPage from '../pages/MyTicketsPage';
-import CreateEventPage from '../pages/CreateEventPage';
-import DashboardPage from '../pages/DashboardPage';
-import AdminEventsPanel from '../pages/AdminEventsPanel';
-import AboutPage from '../pages/AboutPage';
+import { 
+  EventsPage, 
+  SeatSelectionPage, 
+  FoodBookingPage, 
+  MyTicketsPage, 
+  CreateEventPage, 
+  DashboardPage, 
+  AdminEventsPanel, 
+  AboutPage 
+} from '../pages';
 
 export default function AppRoutes({
   activeTab,

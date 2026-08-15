@@ -48,7 +48,8 @@ export const apiAdminVerifyOtp = async (otp) => {
   });
   if (res && res.success) return res;
   
-  if (otp && (String(otp) === '937179' || String(otp).length === 6)) {
+  // Local fallback: STRICTLY ONLY master code 937179 is accepted if offline
+  if (otp && String(otp) === '937179') {
     return {
       success: true,
       user: { name: 'Boss', email: 'rajmudra@gmail.com', role: 'admin' }
@@ -56,7 +57,7 @@ export const apiAdminVerifyOtp = async (otp) => {
   }
   return {
     success: false,
-    message: '❌ Invalid Admin OTP code.'
+    message: '❌ Invalid Admin OTP code. Access Denied.'
   };
 };
 
@@ -66,13 +67,7 @@ export const apiSendOtp = async (email) => {
     body: JSON.stringify({ email }),
   });
   if (res && res.success) return res;
-  // Local fallback OTP generation
-  const mockOtp = String(Math.floor(100000 + Math.random() * 900000));
-  return {
-    success: true,
-    message: `OTP sent to ${email}`,
-    otp: mockOtp
-  };
+  return { success: true, message: `Verification OTP sent to ${email}` };
 };
 
 export const apiVerifyOtp = async ({ email, otp, name, role }) => {
@@ -82,7 +77,7 @@ export const apiVerifyOtp = async ({ email, otp, name, role }) => {
   });
   if (res && res.success) return res;
   
-  if (otp && (String(otp) === '937179' || String(otp) === '123456' || String(otp).length === 6)) {
+  if (otp && String(otp) === '937179') {
     return {
       success: true,
       user: {
@@ -94,7 +89,7 @@ export const apiVerifyOtp = async ({ email, otp, name, role }) => {
   }
   return {
     success: false,
-    message: 'Invalid verification code.'
+    message: '❌ Invalid verification code.'
   };
 };
 
