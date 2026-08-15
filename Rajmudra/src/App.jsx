@@ -4,9 +4,11 @@ import EventsPage from './pages/EventsPage';
 import MyTicketsPage from './pages/MyTicketsPage';
 import CreateEventPage from './pages/CreateEventPage';
 import DashboardPage from './pages/DashboardPage';
+import AdminEventsPanel from './pages/adminpanel.jsx';
+
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('events');
+  const [activeTab, setActiveTab] = useState('admin');
 
   // Initial Events Data
   const [events, setEvents] = useState([
@@ -122,11 +124,14 @@ export default function App() {
             <CreateEventPage onAddEvent={handleAddEvent} />
           )}
 
-          {activeTab === 'dashboard' && (
-            <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
-          )}
-        </main>
-      )}
+        {activeTab === 'dashboard' && (
+          <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
+        )}
+
+        {activeTab === 'admin' && (
+          <AdminEventsPanel events={events} setEvents={setEvents} attendees={attendees} />
+        )}
+      </main>
     </div>
   );
 }
