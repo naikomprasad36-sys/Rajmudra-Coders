@@ -74,7 +74,7 @@ export default function App() {
       ...attendees,
       { id: newTicketId, name: 'User (You)', email: 'user@campus.edu', checkedIn: false, time: '-' }
     ]);
-    
+
     // Decrement available seats
     setEvents(events.map((ev) => ev.id === event.id ? { ...ev, availableSeats: ev.availableSeats - 1 } : ev));
 
@@ -104,29 +104,29 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Navbar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        ticketCount={myTickets.length} 
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        ticketCount={myTickets.length}
       />
 
-      <main className="max-w-6xl mx-auto p-6">
-        {activeTab === 'events' && (
-          <EventsPage events={events} onBookTicket={handleBookTicket} />
-        )}
+      {activeTab === 'events' ? (
+        <EventsPage events={events} onBookTicket={handleBookTicket} />
+      ) : (
+        <main className="max-w-6xl mx-auto p-6">
+          {activeTab === 'tickets' && (
+            <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
+          )}
 
-        {activeTab === 'tickets' && (
-          <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
-        )}
+          {activeTab === 'create' && (
+            <CreateEventPage onAddEvent={handleAddEvent} />
+          )}
 
-        {activeTab === 'create' && (
-          <CreateEventPage onAddEvent={handleAddEvent} />
-        )}
-
-        {activeTab === 'dashboard' && (
-          <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
-        )}
-      </main>
+          {activeTab === 'dashboard' && (
+            <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
+          )}
+        </main>
+      )}
     </div>
   );
 }
