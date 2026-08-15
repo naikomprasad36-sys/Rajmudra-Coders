@@ -4,9 +4,11 @@ import EventsPage from './pages/EventsPage';
 import MyTicketsPage from './pages/MyTicketsPage';
 import CreateEventPage from './pages/CreateEventPage';
 import DashboardPage from './pages/DashboardPage';
+import AdminEventsPanel from './pages/adminpanel.jsx';
+
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('events');
+  const [activeTab, setActiveTab] = useState('admin');
 
   // Initial Events Data
   const [events, setEvents] = useState([
@@ -74,7 +76,7 @@ export default function App() {
       ...attendees,
       { id: newTicketId, name: 'User (You)', email: 'user@campus.edu', checkedIn: false, time: '-' }
     ]);
-    
+
     // Decrement available seats
     setEvents(events.map((ev) => ev.id === event.id ? { ...ev, availableSeats: ev.availableSeats - 1 } : ev));
 
@@ -104,10 +106,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Navbar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        ticketCount={myTickets.length} 
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        ticketCount={myTickets.length}
       />
 
       <main className="max-w-6xl mx-auto p-6">
@@ -125,6 +127,10 @@ export default function App() {
 
         {activeTab === 'dashboard' && (
           <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
+        )}
+
+        {activeTab === 'admin' && (
+          <AdminEventsPanel events={events} setEvents={setEvents} attendees={attendees} />
         )}
       </main>
     </div>

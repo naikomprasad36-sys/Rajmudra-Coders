@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Ticket, PlusCircle, LayoutDashboard, Sparkles } from 'lucide-react';
+import { Calendar, Ticket, PlusCircle, LayoutDashboard, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, ticketCount }) {
   const navItems = [
@@ -7,6 +7,7 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount }) {
     { id: 'tickets', label: 'My Tickets', icon: Ticket, badge: ticketCount },
     { id: 'create', label: 'Create Event', icon: PlusCircle },
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'admin', label: 'Admin Panel', icon: ShieldCheck },
   ];
 
   return (
