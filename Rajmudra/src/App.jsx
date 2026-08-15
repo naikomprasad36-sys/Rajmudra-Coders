@@ -143,42 +143,42 @@ export default function App() {
         ticketCount={myTickets.length}
       />
 
-      <main className="max-w-6xl mx-auto p-6">
-        {activeTab === 'events' && (
-          <EventsPage events={events} onBookTicket={handleBookTicket} />
-        )}
+      {activeTab === 'events' ? (
+        <EventsPage events={events} onBookTicket={handleBookTicket} />
+      ) : (
+        <main className="max-w-6xl mx-auto p-6">
+          {activeTab === 'seats' && (
+            <SeatSelectionPage 
+              events={events} 
+              onBookTicket={handleBookTicket} 
+              setActiveTab={setActiveTab} 
+            />
+          )}
 
-        {activeTab === 'seats' && (
-          <SeatSelectionPage 
-            events={events} 
-            onBookTicket={handleBookTicket} 
-            setActiveTab={setActiveTab} 
-          />
-        )}
+          {activeTab === 'food' && (
+            <FoodBookingPage 
+              onBookFood={handleBookFood} 
+              setActiveTab={setActiveTab} 
+            />
+          )}
 
-        {activeTab === 'food' && (
-          <FoodBookingPage 
-            onBookFood={handleBookFood} 
-            setActiveTab={setActiveTab} 
-          />
-        )}
+          {activeTab === 'tickets' && (
+            <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
+          )}
 
-        {activeTab === 'tickets' && (
-          <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
-        )}
+          {activeTab === 'create' && (
+            <CreateEventPage onAddEvent={handleAddEvent} />
+          )}
 
-        {activeTab === 'create' && (
-          <CreateEventPage onAddEvent={handleAddEvent} />
-        )}
+          {activeTab === 'dashboard' && (
+            <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
+          )}
 
-        {activeTab === 'dashboard' && (
-          <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
-        )}
-
-        {activeTab === 'admin' && (
-          <AdminEventsPanel events={events} setEvents={setEvents} attendees={attendees} />
-        )}
-      </main>
+          {activeTab === 'admin' && (
+            <AdminEventsPanel events={events} setEvents={setEvents} attendees={attendees} />
+          )}
+        </main>
+      )}
     </div>
   );
 }

@@ -9,8 +9,8 @@ export default function MyTicketsPage({ tickets, onBrowseClick }) {
         <Ticket className="w-12 h-12 text-slate-400 mx-auto mb-3" />
         <h3 className="font-bold text-slate-700 text-lg">No Tickets Booked Yet</h3>
         <p className="text-xs text-slate-500 mt-1">Explore upcoming events and book your digital QR pass.</p>
-        <button 
-          onClick={onBrowseClick} 
+        <button
+          onClick={onBrowseClick}
           className="mt-5 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition shadow-sm"
         >
           Browse Events
@@ -60,8 +60,8 @@ export default function MyTicketsPage({ tickets, onBrowseClick }) {
                 </div>
               </div>
 
-              <button 
-                onClick={() => window.print()} 
+              <button
+                onClick={() => window.print()}
                 className="mt-5 inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition"
               >
                 <Printer className="w-4 h-4" /> Print / Save Pass
