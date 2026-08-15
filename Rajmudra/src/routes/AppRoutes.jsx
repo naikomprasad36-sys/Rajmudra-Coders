@@ -6,6 +6,7 @@ import MyTicketsPage from '../pages/MyTicketsPage';
 import CreateEventPage from '../pages/CreateEventPage';
 import DashboardPage from '../pages/DashboardPage';
 import AdminEventsPanel from '../pages/adminpanel';
+import AboutPage from '../pages/AboutPage';
 
 export default function AppRoutes({
   activeTab,
@@ -50,12 +51,16 @@ export default function AppRoutes({
         />
       )}
 
+      {activeTab === 'about' && (
+        <AboutPage onExploreEvents={() => setActiveTab('events')} />
+      )}
+
       {activeTab === 'create' && (
         <CreateEventPage onAddEvent={onAddEvent} />
       )}
 
       {activeTab === 'dashboard' && (
-        <DashboardPage attendees={attendees} onToggleCheckIn={onToggleCheckIn} />
+        <DashboardPage events={events} attendees={attendees} onToggleCheckIn={onToggleCheckIn} />
       )}
 
       {activeTab === 'admin' && (
