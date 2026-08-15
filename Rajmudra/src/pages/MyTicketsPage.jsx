@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Search, QrCode, Eye, EyeOff, Printer, Download, CheckCircle2, Calendar, MapPin, Ticket, Sparkles } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Search, QrCode, Eye, EyeOff, Printer, Download, CheckCircle2, Calendar, MapPin, Ticket } from 'lucide-react';
 
-export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
+export default function MyTicketsPage({ tickets = [], bookedPasses = [], onExploreClick }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showQrMap, setShowQrMap] = useState({});
@@ -10,46 +10,51 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
     setShowQrMap((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const filteredPasses = bookedPasses.filter((pass) => {
-    const matchesSearch = 
-      pass.eventTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pass.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pass.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = selectedCategory === 'All' || pass.category?.toLowerCase() === selectedCategory.toLowerCase();
-    
-    return matchesSearch && matchesCategory;
-  });
+  // Combine tickets from prop (live booked tickets + initial booked passes)
+  const combinedPasses = useMemo(() => {
+    const list = [...tickets, ...bookedPasses];
+    const seen = new Set();
+    return list.filter((item) => {
+      if (!item || !item.id) return false;
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  }, [tickets, bookedPasses]);
 
-  const categories = ['All', 'Hackathon', 'Summit', 'Fest'];
+  const filteredPasses = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return combinedPasses.filter((pass) => {
+      const matchesSearch = 
+        !query ||
+        pass.eventTitle?.toLowerCase().includes(query) ||
+        pass.venue?.toLowerCase().includes(query) ||
+        pass.id?.toLowerCase().includes(query);
+      
+      const matchesCategory = 
+        selectedCategory === 'All' || 
+        pass.category?.toLowerCase() === selectedCategory.toLowerCase();
+      
+      return matchesSearch && matchesCategory;
+    });
+  }, [combinedPasses, searchQuery, selectedCategory]);
+
+  const categories = ['All', 'Hackathon', 'Summit', 'Fest', 'Workshop'];
 
   return (
     <div className="relative min-h-[80vh] overflow-hidden px-4 sm:px-8 py-8 bg-[#FDFBF7]">
-      
-      
-      <div className="absolute inset-0 z-30 bg-gradient-to-br from-white/40 via-amber-100/30 to-stone-900/10 backdrop-blur-md pointer-events-none animate-fade-out transition-all duration-1000 flex items-center justify-center">
-        <div className="px-6 py-3 rounded-2xl bg-white/80 border border-amber-400/50 shadow-2xl backdrop-blur-xl flex items-center gap-2 text-amber-900 text-xs font-bold animate-pulse">
-          <Sparkles className="w-4 h-4 text-amber-600 animate-spin" />
-          <span>Opening Your Digital Pass Vault...</span>
-        </div>
-      </div>
-
-      
       <div className="relative z-10 max-w-7xl mx-auto space-y-8">
        
         <div className="relative group">
-          
-          <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 rounded-[2.8rem] blur-md opacity-40 group-hover:opacity-75 transition duration-500 pointer-events-none"></div>
+          <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 rounded-[2.8rem] blur-md opacity-40 group-hover:opacity-75 transition duration-500 pointer-events-none" />
 
           <div className="relative flex flex-col lg:flex-row items-center justify-between gap-5 bg-gradient-to-br from-white via-amber-50/90 to-white backdrop-blur-2xl p-6 lg:p-7 rounded-[2.5rem] border-[3px] border-amber-500 shadow-[0_20px_50px_rgba(217,119,6,0.25)] overflow-hidden">
             
-            
-            <div className="absolute -right-12 -top-12 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute left-1/4 -bottom-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="absolute -right-12 -top-12 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute left-1/4 -bottom-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-2xl pointer-events-none" />
 
-            
             <div className="relative w-full lg:w-[440px]">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-2xl blur-sm opacity-30 group-focus-within:opacity-100 transition duration-300"></div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-yellow-400 rounded-2xl blur-sm opacity-30 group-focus-within:opacity-100 transition duration-300" />
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-700 font-bold" />
                 <input
@@ -62,7 +67,6 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
               </div>
             </div>
 
-           
             <div className="flex items-center gap-2.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0 scrollbar-none z-10">
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat;
@@ -76,7 +80,7 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
                         : 'bg-white text-stone-700 border-2 border-amber-300/80 hover:bg-amber-100/80 hover:text-amber-950 hover:border-amber-500 hover:shadow-lg'
                     }`}
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-white animate-pulse' : 'bg-amber-500'}`}></span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-white animate-pulse' : 'bg-amber-500'}`} />
                     {cat}
                   </button>
                 );
@@ -85,7 +89,6 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
           </div>
         </div>
 
-        
         {filteredPasses.length === 0 ? (
           <div className="text-center py-20 bg-white/90 backdrop-blur-xl rounded-3xl border border-amber-500/30 shadow-xl space-y-4">
             <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto text-amber-600 border border-amber-500/30">
@@ -112,14 +115,11 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
                   key={pass.id || index}
                   className="relative rounded-3xl bg-white/90 backdrop-blur-xl border border-amber-500/40 shadow-[0_15px_35px_rgba(245,158,11,0.2)] flex flex-col sm:flex-row items-stretch hover:shadow-[0_20px_45px_rgba(245,158,11,0.35)] transition-all duration-300 overflow-hidden group"
                 >
-                 
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-                  
-                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#FDFBF7] rounded-full border-r-2 border-amber-500/50 z-20 hidden sm:block"></div>
-                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#FDFBF7] rounded-full border-l-2 border-amber-500/50 z-20 hidden sm:block"></div>
+                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#FDFBF7] rounded-full border-r-2 border-amber-500/50 z-20 hidden sm:block" />
+                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#FDFBF7] rounded-full border-l-2 border-amber-500/50 z-20 hidden sm:block" />
 
-                 
                   <div className="bg-gradient-to-b from-[#1E1914] via-[#2A231C] to-[#14100D] p-6 flex flex-col items-center justify-center border-b sm:border-b-0 sm:border-r border-amber-500/30 relative min-w-[190px] z-10">
                     <div className="w-28 h-28 bg-white p-2 rounded-xl flex items-center justify-center shadow-inner relative overflow-hidden">
                       {isQrVisible ? (
@@ -145,7 +145,6 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
                     </div>
                   </div>
 
-                  
                   <div className="flex-1 p-6 flex flex-col justify-between space-y-4 relative z-10">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -175,7 +174,6 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
                       </div>
                     </div>
 
-                    
                     <div className="flex items-center justify-between pt-3 border-t border-amber-500/20">
                       <div className="flex items-center gap-2">
                         <button 
