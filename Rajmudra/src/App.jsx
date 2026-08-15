@@ -112,18 +112,17 @@ export default function App() {
         ticketCount={myTickets.length}
       />
 
-      <main className="max-w-6xl mx-auto p-6">
-        {activeTab === 'events' && (
-          <EventsPage events={events} onBookTicket={handleBookTicket} />
-        )}
+      {activeTab === 'events' ? (
+        <EventsPage events={events} onBookTicket={handleBookTicket} />
+      ) : (
+        <main className="max-w-6xl mx-auto p-6">
+          {activeTab === 'tickets' && (
+            <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
+          )}
 
-        {activeTab === 'tickets' && (
-          <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
-        )}
-
-        {activeTab === 'create' && (
-          <CreateEventPage onAddEvent={handleAddEvent} />
-        )}
+          {activeTab === 'create' && (
+            <CreateEventPage onAddEvent={handleAddEvent} />
+          )}
 
         {activeTab === 'dashboard' && (
           <DashboardPage attendees={attendees} onToggleCheckIn={handleToggleCheckIn} />
