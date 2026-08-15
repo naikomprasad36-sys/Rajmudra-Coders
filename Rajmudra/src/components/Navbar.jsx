@@ -103,8 +103,8 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-[#FAF7F2]/90 backdrop-blur-xl border-b border-[#E5B84B]/20 transition-all duration-300 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-3">
+      <header className="fixed top-0 inset-x-0 z-50 bg-gradient-to-b from-black/80 via-black/40 to-transparent backdrop-blur-md border-b border-white/10 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
           
           {/* Brand Logo - Rajmudra Events / Golden Aura */}
           <div 
@@ -112,24 +112,24 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
             className="flex items-center gap-3 cursor-pointer group select-none shrink-0"
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-[#E5B84B] rounded-2xl blur-md opacity-40 group-hover:opacity-75 group-hover:scale-110 transition-all duration-300" />
+              <div className="absolute inset-0 bg-[#E5B84B] rounded-2xl blur-md opacity-50 group-hover:opacity-80 group-hover:scale-110 transition-all duration-300" />
               <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#C59325] via-[#E5B84B] to-[#F3E5AB] flex items-center justify-center text-[#1A1614] shadow-md border border-[#F3E5AB]/40 group-hover:rotate-6 group-hover:scale-105 transition-all duration-300">
                 <Crown className="w-5 h-5 fill-current text-[#1A1614]" />
               </div>
             </div>
             <div>
-              <span className="font-black text-xl sm:text-2xl tracking-tight block leading-tight text-transparent bg-clip-text bg-gradient-to-r from-[#B8860B] via-[#D4A337] to-[#8C6207] group-hover:from-[#96660F] group-hover:to-[#D4A337] transition-all duration-300">
+              <span className="font-black text-xl sm:text-2xl tracking-tight block leading-tight text-transparent bg-clip-text bg-gradient-to-r from-[#F3E5AB] via-[#E5B84B] to-[#D4A337] drop-shadow-md">
                 Rajmudra Events
               </span>
-              <span className="text-[10px] font-bold text-[#8C7A6B] block tracking-[0.2em] uppercase">
-                Luxury & Grand Experiences
+              <span className="text-[10px] font-bold text-[#E5B84B]/90 block tracking-[0.2em] uppercase drop-shadow-sm">
+                Luxury &amp; Grand Experiences
               </span>
             </div>
           </div>
 
-          {/* Center: Primary Public Navigation Pills */}
-          <nav className="hidden md:flex relative bg-white/85 backdrop-blur-2xl border border-[#E5B84B]/30 shadow-lg shadow-[#E5B84B]/10 rounded-full p-1.5 items-center gap-1 sm:gap-1.5 overflow-x-auto">
-            {primaryNavItems.map((item) => {
+          {/* Floating Pill Capsule Navigation Tabs */}
+          <nav className="hidden md:flex relative bg-black/40 backdrop-blur-2xl border border-white/20 shadow-xl shadow-black/20 rounded-full p-1.5 items-center gap-1 sm:gap-1.5 overflow-x-auto">
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               const isHovered = hoveredTab === item.id;
@@ -143,7 +143,7 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                   className={`group relative px-3.5 sm:px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-2 select-none shrink-0 ${
                     isActive
                       ? 'bg-gradient-to-r from-[#D4A337] via-[#E5B84B] to-[#D4A337] text-[#1A1614] shadow-md shadow-[#D4A337]/35 scale-[1.03]'
-                      : 'text-[#5C4E46] hover:text-[#96660F] hover:bg-[#E5B84B]/15 hover:scale-105 active:scale-95'
+                      : 'text-white/80 hover:text-white hover:bg-white/15 hover:scale-105 active:scale-95'
                   }`}
                 >
                   {/* Active Aura / Glow dot */}
@@ -157,8 +157,8 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                       isActive 
                         ? 'text-[#1A1614] stroke-[2.5]' 
                         : isHovered 
-                          ? 'text-[#B8860B] scale-110 -rotate-6' 
-                          : 'text-[#8C7A6B]'
+                          ? 'text-[#E5B84B] scale-110 -rotate-6' 
+                          : 'text-white/70'
                     }`} 
                   />
 
@@ -280,7 +280,7 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-white/90 border border-[#E5B84B]/40 hover:border-[#E5B84B] shadow-sm transition-all duration-200"
+                  className="flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-black/50 border border-white/20 hover:border-[#E5B84B] shadow-sm transition-all duration-200 backdrop-blur-md"
                 >
                   <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#D4A337] to-[#F3E5AB] flex items-center justify-center text-[#1A1614] font-black text-xs shadow-xs">
                     {user.name.charAt(0).toUpperCase()}
@@ -288,32 +288,32 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                   <span className="text-xs font-bold text-[#2C221E] max-w-[90px] truncate hidden sm:inline">
                     {user.name}
                   </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-[#8C7A6B] transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-[#E5B84B]/30 p-2 space-y-1 z-50 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-3 py-2 border-b border-slate-100">
-                      <p className="text-xs font-black text-[#2C221E]">{user.name}</p>
-                      <p className="text-[10px] text-[#8C7A6B] truncate">{user.email}</p>
+                  <div className="absolute right-0 mt-2 w-52 bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-xl border border-white/20 p-2 space-y-1 z-50 text-white animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-3 py-2 border-b border-white/10">
+                      <p className="text-xs font-black text-white">{user.name}</p>
+                      <p className="text-[10px] text-white/60 truncate">{user.email}</p>
                     </div>
                     <button
                       onClick={() => { setActiveTab('tickets'); setIsUserMenuOpen(false); }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-[#5C4E46] hover:bg-[#FAF7F2] hover:text-[#96660F] flex items-center gap-2 transition"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-white/80 hover:bg-white/15 hover:text-[#E5B84B] flex items-center gap-2 transition"
                     >
                       <Ticket className="w-3.5 h-3.5" />
-                      <span>My Passes & Tickets</span>
+                      <span>My Passes &amp; Tickets</span>
                     </button>
                     <button
                       onClick={() => { setActiveTab('admin'); setIsUserMenuOpen(false); }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-[#5C4E46] hover:bg-[#FAF7F2] hover:text-[#96660F] flex items-center gap-2 transition"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-white/80 hover:bg-white/15 hover:text-[#E5B84B] flex items-center gap-2 transition"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>Admin Dashboard</span>
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/20 flex items-center gap-2 transition"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                       <span>Sign Out</span>
@@ -357,7 +357,7 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                 className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition ${
                   isActive
                     ? 'bg-gradient-to-r from-[#D4A337] to-[#E5B84B] text-[#1A1614] shadow-sm'
-                    : 'text-[#5C4E46] hover:bg-[#E5B84B]/15'
+                    : 'text-white/80 hover:bg-white/15'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />

@@ -551,6 +551,7 @@ export default function App() {
       {activeTab === 'events' ? (
         <EventsPage events={events} onBookTicket={handleBookTicket} />
       ) : (
+        <main className="max-w-6xl mx-auto p-6 pt-24">
         <main className="max-w-6xl mx-auto p-6">
           {activeTab === 'seats' && (
             <SeatSelectionPage 
