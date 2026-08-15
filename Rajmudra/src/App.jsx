@@ -1,122 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from "react";
+import MyTicketsPage from "./MyTicketsPage";
+import CreateEventPage from "./CreateEventPage";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [currentPage, setCurrentPage] = useState("tickets");
+
+  // Demo Ticket Data
+  const [tickets] = useState([
+    {
+      id: "RM-2026-001",
+      name: "Vedika Mokase",
+      eventTitle: "Rajmudra Hackathon 2026",
+      venue: "Pune Engineering College",
+      date: "15 Aug 2026",
+      time: "10:00 AM",
+    },
+    {
+      id: "RM-2026-002",
+      name: "Vedika Mokase",
+      eventTitle: "AI & Innovation Summit",
+      venue: "Mumbai Convention Hall",
+      date: "22 Aug 2026",
+      time: "2:30 PM",
+    },
+  ]);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-slate-100">
 
-      <div className="ticks"></div>
+      {/* Navbar */}
+      <nav className="bg-indigo-700 text-white px-6 py-4 flex items-center justify-between shadow-lg">
+        <h1 className="text-2xl font-black">
+          Rajmudra Coders
+        </h1>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <div className="flex gap-3">
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          <button
+            onClick={() => setCurrentPage("tickets")}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
+              currentPage === "tickets"
+                ? "bg-white text-indigo-700"
+                : "bg-white/20 hover:bg-white/30"
+            }`}
+          >
+            My Tickets
+          </button>
+
+          <button
+            onClick={() => setCurrentPage("create")}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
+              currentPage === "create"
+                ? "bg-white text-indigo-700"
+                : "bg-white/20 hover:bg-white/30"
+            }`}
+          >
+            Create Event
+          </button>
+
+        </div>
+      </nav>
+
+      {/* Page */}
+      <main className="max-w-6xl mx-auto p-6">
+
+        {currentPage === "tickets" && (
+          <MyTicketsPage
+            tickets={tickets}
+            onBrowseClick={() => setCurrentPage("create")}
+          />
+        )}
+
+        {currentPage === "create" && (
+          <CreateEventPage
+            onBack={() => setCurrentPage("tickets")}
+          />
+        )}
+
+      </main>
+    </div>
+  );
 }
-
-export default App
