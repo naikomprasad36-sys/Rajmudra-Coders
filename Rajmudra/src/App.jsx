@@ -18,6 +18,9 @@ import {
 export default function App() {
   const [activeTab, setActiveTab] = useState('events');
 
+  // Application User Auth State
+  const [user, setUser] = useState(null);
+
   // Application Datasets
   const [events, setEvents] = useState(initialEvents);
   const [myTickets, setMyTickets] = useState(initialMyTickets);
@@ -63,7 +66,7 @@ export default function App() {
     const ticketData = {
       id: newTicketId,
       eventTitle: ticketOrEvent?.title || 'Campus Event Pass',
-      name: 'User (You)',
+      name: user?.name || 'User (You)',
       date: ticketOrEvent?.date || '25 Aug 2026',
       time: ticketOrEvent?.time || '10:00 AM',
       venue: ticketOrEvent?.venue || 'Main Auditorium'
@@ -74,8 +77,8 @@ export default function App() {
       ...prev,
       { 
         id: newTicketId, 
-        name: 'User (You)', 
-        email: 'user@campus.edu', 
+        name: user?.name || 'User (You)', 
+        email: user?.email || 'user@campus.edu', 
         checkedIn: false, 
         time: '-',
         eventId: ticketOrEvent?.id || 1,
@@ -114,6 +117,8 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         ticketCount={myTickets.length}
+        user={user}
+        setUser={setUser}
       />
 
       <AppRoutes
@@ -124,6 +129,8 @@ export default function App() {
         myTickets={myTickets}
         attendees={attendees}
         bookedPasses={bookedPasses}
+        user={user}
+        setUser={setUser}
         onBookTicket={handleBookTicket}
         onAddEvent={handleAddEvent}
         onToggleCheckIn={handleToggleCheckIn}

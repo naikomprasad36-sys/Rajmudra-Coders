@@ -16,17 +16,19 @@ import {
   X,
   SlidersHorizontal,
   ChevronRight,
-  Info
+  Info,
+  Lock
 } from 'lucide-react';
 import AuthModal from '../common/AuthModal';
 
-export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
+export default function Navbar({ activeTab, setActiveTab, ticketCount = 0, user, setUser }) {
   const [hoveredTab, setHoveredTab] = useState(null);
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   
   // Auth Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
+  const [isAdminLoginMode, setIsAdminLoginMode] = useState(false);
   const [authForm, setAuthForm] = useState({
     name: '',
     email: '',
@@ -34,8 +36,6 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
     role: 'attendee'
   });
   
-  // Logged-in user state
-  const [user, setUser] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   // Primary Public Navigation Tabs
@@ -71,33 +71,44 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
 
   const isManagementActive = hamburgerItems.some((item) => item.id === activeTab);
 
-  const handleOpenAuth = (mode = 'login') => {
+  // Open User Auth Modal (For Normal Attendees)
+  const handleOpenUserAuth = (mode = 'login') => {
+    setIsAdminLoginMode(false);
     setAuthMode(mode);
+    setAuthForm({ name: '', email: '', password: '', role: 'attendee' });
     setIsAuthModalOpen(true);
   };
 
-  const handleAuthSubmit = (e) => {
-    e.preventDefault();
-    if (!authForm.email || !authForm.password) return;
-
-    setUser({
-      name: authMode === 'signup' && authForm.name ? authForm.name : (authForm.email.split('@')[0] || 'User'),
-      email: authForm.email,
-      role: authForm.role
-    });
-
-    setIsAuthModalOpen(false);
-    setAuthForm({ name: '', email: '', password: '', role: 'attendee' });
+  // Open Dedicated Admin Auth Modal (Requires rajmudra@gmail.com & rajmudra)
+  const handleOpenAdminAuth = () => {
+    setIsAdminLoginMode(true);
+    setAuthMode('login');
+    setAuthForm({ name: '', email: '', password: '', role: 'admin' });
+    setIsAuthModalOpen(true);
   };
 
   const handleLogout = () => {
-    setUser(null);
+    if (setUser) setUser(null);
     setIsUserMenuOpen(false);
+    setIsHamburgerOpen(false);
+  };
+
+  const handleHamburgerButtonClick = () => {
+    if (user?.role === 'admin') {
+      setIsHamburgerOpen(!isHamburgerOpen);
+    } else {
+      handleOpenAdminAuth();
+    }
   };
 
   const handleHamburgerSelect = (id) => {
-    setActiveTab(id);
-    setIsHamburgerOpen(false);
+    if (user?.role === 'admin') {
+      setActiveTab(id);
+      setIsHamburgerOpen(false);
+    } else {
+      setIsHamburgerOpen(false);
+      handleOpenAdminAuth();
+    }
   };
 
   return (
@@ -105,7 +116,7 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
       <header className="fixed top-0 inset-x-0 z-50 bg-[#120E0C]/90 backdrop-blur-xl border-b border-[#E5B84B]/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
           
-          {/* Brand Logo - Professional Gold Crest */}
+          {/* Brand Logo */}
           <div 
             onClick={() => setActiveTab('events')} 
             className="flex items-center gap-3.5 cursor-pointer group select-none shrink-0"
@@ -126,7 +137,7 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
             </div>
           </div>
 
-          {/* Professional Navigation Capsule (Visible on LG+ Screens to Prevent Overflow) */}
+          {/* Professional Navigation Capsule */}
           <nav className="hidden lg:flex relative bg-[#1A1614]/90 backdrop-blur-2xl border border-[#E5B84B]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)] rounded-full p-1 lg:p-1.5 items-center gap-0.5 lg:gap-1 scrollbar-none shrink-0">
             {primaryNavItems.map((item) => {
               const Icon = item.icon;
@@ -179,43 +190,43 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
             })}
           </nav>
 
-          {/* Right Section: Hamburger Menu + Auth */}
-          <div className="flex items-center gap-2.5">
+          {/* Right Section: Admin Lock Button + User Auth / Profile Badge */}
+          <div className="flex items-center gap-2.5 shrink-0">
             
-            {/* Organizer & Admin Tools Button */}
+            {/* 1. SEPARATE ADMIN SECTION LOCK BUTTON */}
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}
-                title="Organizer & Admin Tools"
-                className={`relative px-3.5 py-2 rounded-full border text-xs font-black flex items-center gap-2 transition-all duration-300 shadow-md ${
-                  isHamburgerOpen || isManagementActive
+                onClick={handleHamburgerButtonClick}
+                title={user?.role === 'admin' ? 'Organizer & Admin Suite' : 'Admin Login Required (rajmudra@gmail.com)'}
+                className={`relative px-3 sm:px-3.5 py-2 rounded-full border text-xs font-black flex items-center gap-1.5 transition-all duration-300 shadow-md ${
+                  user?.role === 'admin'
                     ? 'bg-gradient-to-r from-[#D4A337] via-[#E5B84B] to-[#D4A337] text-[#1A1614] border-[#F3E5AB] shadow-[#E5B84B]/30 scale-105'
-                    : 'bg-gradient-to-r from-[#2A211D] to-[#1A1614] text-[#F3E5AB] border-[#E5B84B]/40 hover:border-[#E5B84B] hover:shadow-[0_0_15px_rgba(229,184,75,0.25)]'
+                    : 'bg-[#1A1614] text-[#F3E5AB] border-[#E5B84B]/40 hover:border-[#E5B84B] hover:bg-[#2C221E]'
                 }`}
               >
-                {isManagementActive && !isHamburgerOpen && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-black animate-pulse" />
-                )}
-
-                {isHamburgerOpen ? (
-                  <X className="w-4 h-4 text-[#1A1614] stroke-[2.5]" />
+                {user?.role === 'admin' ? (
+                  isHamburgerOpen ? (
+                    <X className="w-4 h-4 text-[#1A1614] stroke-[2.5]" />
+                  ) : (
+                    <ShieldCheck className="w-4 h-4 text-[#1A1614] stroke-[2.5]" />
+                  )
                 ) : (
-                  <Menu className={`w-4 h-4 transition-transform duration-300 ${isManagementActive ? 'text-[#1A1614]' : 'text-[#E5B84B]'}`} />
+                  <Lock className="w-4 h-4 text-[#E5B84B]" />
                 )}
 
                 <span className="hidden sm:inline font-black tracking-wide">
-                  {isManagementActive ? 'Admin Tools' : 'Menu'}
+                  {user?.role === 'admin' ? 'Admin Tools' : 'Admin Lock'}
                 </span>
               </button>
 
-              {/* Hamburger Dropdown Drawer */}
-              {isHamburgerOpen && (
+              {/* Admin Tools Dropdown Drawer (Only unlocked when Boss Admin logs in) */}
+              {isHamburgerOpen && user?.role === 'admin' && (
                 <div className="absolute right-0 mt-3 w-72 sm:w-80 bg-[#1F1916]/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-[#E5B84B]/40 p-3.5 space-y-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                   <div className="px-3.5 py-2.5 border-b border-[#E5B84B]/20 flex items-center justify-between">
                     <div>
                       <span className="text-[10px] font-black uppercase tracking-widest text-[#D1C7BD] block">Management Suite</span>
-                      <h4 className="text-sm font-extrabold text-[#F3E5AB]">Admin &amp; Host Controls</h4>
+                      <h4 className="text-sm font-extrabold text-[#F3E5AB]">👑 Boss Admin Controls</h4>
                     </div>
                     <SlidersHorizontal className="w-4 h-4 text-[#E5B84B]" />
                   </div>
@@ -261,36 +272,52 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                   </div>
 
                   <div className="p-2.5 bg-[#1A1614] rounded-2xl border border-[#E5B84B]/15 text-center">
-                    <p className="text-[10px] text-[#A39485]">
-                      🔒 Secure role-based management panel
+                    <p className="text-[10px] text-[#F3E5AB] font-bold">
+                      👑 Authenticated as Boss (rajmudra@gmail.com)
                     </p>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Auth Buttons / User Profile */}
+            {/* 2. SEPARATE USER AUTHENTICATION / PROFILE BADGE */}
             {user ? (
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-[#1A1614]/90 border border-[#E5B84B]/40 hover:border-[#E5B84B] shadow-md transition-all duration-200 backdrop-blur-md"
+                  className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-full border shadow-md transition-all duration-200 backdrop-blur-md ${
+                    user.role === 'admin'
+                      ? 'bg-gradient-to-r from-[#D4A337] via-[#E5B84B] to-[#D4A337] text-[#1A1614] border-[#F3E5AB]'
+                      : 'bg-[#1A1614]/90 text-[#F3E5AB] border-[#E5B84B]/40 hover:border-[#E5B84B]'
+                  }`}
                 >
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#D4A337] to-[#F3E5AB] flex items-center justify-center text-[#1A1614] font-black text-xs shadow-xs">
-                    {user.name.charAt(0).toUpperCase()}
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center font-black text-xs shadow-xs ${
+                    user.role === 'admin' 
+                      ? 'bg-[#1A1614] text-[#F3E5AB]' 
+                      : 'bg-gradient-to-tr from-[#D4A337] to-[#F3E5AB] text-[#1A1614]'
+                  }`}>
+                    {user.role === 'admin' ? '👑' : user.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-xs font-black text-[#F3E5AB] drop-shadow-sm max-w-[100px] truncate hidden sm:inline">
-                    {user.name}
+
+                  <span className="text-xs font-black drop-shadow-sm max-w-[110px] truncate hidden sm:inline">
+                    {user.role === 'admin' ? '👑 Boss' : user.name}
                   </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-[#E5B84B] transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${user.role === 'admin' ? 'text-[#1A1614]' : 'text-[#E5B84B]'} ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 bg-[#1A1614]/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-[#E5B84B]/40 p-2 space-y-1 z-50 text-white animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute right-0 mt-2 w-56 bg-[#1A1614]/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-[#E5B84B]/40 p-2 space-y-1 z-50 text-white animate-in fade-in zoom-in-95 duration-150">
                     <div className="px-3 py-2 border-b border-[#E5B84B]/20">
-                      <p className="text-xs font-black text-[#F3E5AB]">{user.name}</p>
-                      <p className="text-[10px] text-[#D1C7BD] truncate">{user.email}</p>
+                      <p className="text-xs font-black text-[#F3E5AB] flex items-center justify-between">
+                        <span>{user.role === 'admin' ? '👑 Boss' : user.name}</span>
+                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#E5B84B]/20 text-[#E5B84B] uppercase font-bold">
+                          {user.role}
+                        </span>
+                      </p>
+                      <p className="text-[10px] text-[#D1C7BD] truncate mt-0.5">{user.email}</p>
                     </div>
+
                     <button
                       onClick={() => { setActiveTab('tickets'); setIsUserMenuOpen(false); }}
                       className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-[#D1C7BD] hover:bg-[#E5B84B]/20 hover:text-[#F3E5AB] flex items-center gap-2 transition"
@@ -298,48 +325,45 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
                       <Ticket className="w-3.5 h-3.5 text-[#E5B84B]" />
                       <span>My Passes &amp; Tickets</span>
                     </button>
-                    <button
-                      onClick={() => { setActiveTab('admin'); setIsUserMenuOpen(false); }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-[#D1C7BD] hover:bg-[#E5B84B]/20 hover:text-[#F3E5AB] flex items-center gap-2 transition"
-                    >
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#E5B84B]" />
-                      <span>Admin Dashboard</span>
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/20 flex items-center gap-2 transition"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>Sign Out</span>
-                    </button>
+
+                    {user.role === 'admin' && (
+                      <button
+                        onClick={() => { setActiveTab('admin'); setIsUserMenuOpen(false); }}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-[#D1C7BD] hover:bg-[#E5B84B]/20 hover:text-[#F3E5AB] flex items-center gap-2 transition"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#E5B84B]" />
+                        <span>Admin Dashboard</span>
+                      </button>
+                    )}
+
+                    <div className="pt-1 border-t border-[#E5B84B]/15">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/20 flex items-center gap-2 transition"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <button
-                  onClick={() => handleOpenAuth('login')}
-                  className="px-3.5 sm:px-4.5 py-2 rounded-full text-xs font-bold text-[#D1C7BD] hover:text-[#F3E5AB] hover:bg-[#E5B84B]/15 border border-transparent hover:border-[#E5B84B]/40 transition-all duration-300 flex items-center gap-1.5"
-                >
-                  <LogIn className="w-3.5 h-3.5 text-[#E5B84B]" />
-                  <span className="hidden sm:inline">Log In</span>
-                </button>
-
-                <button
-                  onClick={() => handleOpenAuth('signup')}
-                  className="relative group overflow-hidden px-4 sm:px-5.5 py-2 rounded-full bg-gradient-to-r from-[#D4A337] via-[#C59325] to-[#B8860B] hover:from-[#E5B84B] hover:to-[#D4A337] text-[#1A1614] font-black text-xs shadow-md shadow-[#D4A337]/30 hover:shadow-xl hover:shadow-[#D4A337]/40 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-1.5 border border-[#F3E5AB]/40"
-                >
-                  <UserPlus className="w-3.5 h-3.5 text-[#1A1614]" />
-                  <span>Sign In</span>
-                </button>
-              </div>
+              /* Single Combined User Sign In / Log In Button */
+              <button
+                onClick={() => handleOpenUserAuth('login')}
+                className="relative group overflow-hidden px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-[#D4A337] via-[#C59325] to-[#B8860B] hover:from-[#E5B84B] hover:to-[#D4A337] text-[#1A1614] font-black text-xs shadow-md shadow-[#D4A337]/30 hover:shadow-xl hover:shadow-[#D4A337]/40 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-1.5 border border-[#F3E5AB]/40 shrink-0"
+              >
+                <UserPlus className="w-3.5 h-3.5 text-[#1A1614]" />
+                <span>User Sign In / Log In</span>
+              </button>
             )}
 
           </div>
 
         </div>
 
-        {/* Mobile & Tablet View Tab Bar (Visible on screens smaller than LG) */}
+        {/* Mobile & Tablet View Tab Bar */}
         <div className="lg:hidden border-t border-[#E5B84B]/30 px-4 py-2 bg-[#1A1614]/95 backdrop-blur-md overflow-x-auto scrollbar-none flex items-center justify-between gap-1.5">
           {primaryNavItems.map((item) => {
             const Icon = item.icon;
@@ -365,13 +389,15 @@ export default function Navbar({ activeTab, setActiveTab, ticketCount = 0 }) {
       {/* Auth Modal */}
       <AuthModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => { setIsAuthModalOpen(false); }}
         authMode={authMode}
         setAuthMode={setAuthMode}
         authForm={authForm}
         setAuthForm={setAuthForm}
-        onSuccessLogin={(loggedInUser) => setUser(loggedInUser)}
-        onSubmit={handleAuthSubmit}
+        isAdminLoginMode={isAdminLoginMode}
+        onSuccessLogin={(loggedInUser) => {
+          if (setUser) setUser(loggedInUser);
+        }}
       />
     </>
   );
