@@ -1,12 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 
-import HeroCanvasSection from '../components/events/HeroCanvasSection';
-import GoldenShowcaseBanner from '../components/events/GoldenShowcaseBanner';
-import EventPillarsSection from '../components/events/EventPillarsSection';
-import EventsSearchFilter from '../components/events/EventsSearchFilter';
-import EventCard from '../components/events/EventCard';
-import EmptyState from '../components/events/EmptyState';
+import { 
+  HeroCanvasSection, 
+  GoldenShowcaseBanner, 
+  EventPillarsSection, 
+  EventsSearchFilter, 
+  EventCard, 
+  EmptyState 
+} from '../components';
 
 export default function EventsPage({ events = [], onBookTicket }) {
   const [searchTerm, setSearchTerm] = useState('');
