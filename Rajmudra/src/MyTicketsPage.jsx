@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Search, QrCode, Eye, EyeOff, Printer, Download, CheckCircle2, Calendar, MapPin, Ticket, Sparkles } from 'lucide-react';
 
-export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
+export default function MyTicketsPage({ bookedPasses, tickets, onExploreClick, onBrowseClick }) {
+  const passesList = bookedPasses || tickets || [];
+  const handleExplore = onExploreClick || onBrowseClick;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showQrMap, setShowQrMap] = useState({});
@@ -10,13 +12,13 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
     setShowQrMap((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const filteredPasses = bookedPasses.filter((pass) => {
+  const filteredPasses = passesList.filter((pass) => {
     const matchesSearch = 
-      pass.eventTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pass.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pass.id.toLowerCase().includes(searchQuery.toLowerCase());
+      (pass.eventTitle || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (pass.venue || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      String(pass.id || '').toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesCategory = selectedCategory === 'All' || pass.category?.toLowerCase() === selectedCategory.toLowerCase();
+    const matchesCategory = selectedCategory === 'All' || (pass.category || '').toLowerCase() === selectedCategory.toLowerCase();
     
     return matchesSearch && matchesCategory;
   });
@@ -93,9 +95,9 @@ export default function MyTicketsPage({ bookedPasses = [], onExploreClick }) {
             </div>
             <h3 className="text-lg font-bold text-[#2C2416]">No Passes Found</h3>
             <p className="text-xs text-stone-500 max-w-sm mx-auto">No digital passes match your search or filter criteria.</p>
-            {onExploreClick && (
+            {handleExplore && (
               <button
-                onClick={onExploreClick}
+                onClick={handleExplore}
                 className="px-6 py-2.5 bg-amber-500 text-white rounded-xl text-xs font-bold shadow-md hover:bg-amber-600 transition-all"
               >
                 Browse Events
