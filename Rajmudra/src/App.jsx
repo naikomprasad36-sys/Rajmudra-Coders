@@ -8,7 +8,7 @@ import AdminEventsPanel from './pages/adminpanel.jsx';
 
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('admin');
+  const [activeTab, setActiveTab] = useState('events');
 
   // Initial Events Data
   const [events, setEvents] = useState([
@@ -115,7 +115,7 @@ export default function App() {
       {activeTab === 'events' ? (
         <EventsPage events={events} onBookTicket={handleBookTicket} />
       ) : (
-        <main className="max-w-6xl mx-auto p-6">
+        <main className="max-w-6xl mx-auto p-6 pt-24">
           {activeTab === 'tickets' && (
             <MyTicketsPage tickets={myTickets} onBrowseClick={() => setActiveTab('events')} />
           )}
